@@ -1,0 +1,26 @@
+{
+  "name": "campfire",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A cozy, anonymous, 4-person ephemeral chat room. No accounts, no logs, no trace.",
+  "license": "AGPL-3.0-or-later",
+  "author": "Alex Arkwright <alex@arkwright.work>",
+  "scripts": {
+    "dev": "concurrently -k -n server,client -c yellow,cyan \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:server": "node --watch server/index.js",
+    "dev:client": "vite",
+    "build": "vite build",
+    "start": "NODE_ENV=production node server/index.js",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "socket.io": "^4.7.5"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1",
+    "socket.io-client": "^4.7.5",
+    "vite": "^5.4.0"
+  }
+}

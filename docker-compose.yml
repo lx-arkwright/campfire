@@ -1,0 +1,14 @@
+# Simple local/standalone run — binds :3000 on all interfaces, no database by
+# design (state lives in the process's RAM and dies with it). Run: docker compose up -d
+# For the production deploy (loopback-only, behind CloudPanel + Cloudflare) see
+# deploy/docker-compose.deploy.yml and DEPLOYMENT.md.
+services:
+  campfire:
+    build: .
+    image: campfire:latest
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: "3000"

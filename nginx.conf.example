@@ -1,0 +1,28 @@
+# Nginx reverse-proxy for campfire.arkwright.work on the Vultr VPS.
+# Copy to /etc/nginx/sites-available/campfire, symlink into sites-enabled,
+# then `nginx -t && systemctl reload nginx`. Add TLS with certbot.
+#
+# NOTE: access_log is OFF on purpose. The whole promise is "we can't log you" —
+# don't undo it at the proxy layer.
+
+server {
+    listen 80;
+    server_name campfire.arkwright.work;
+
+    access_log off;
+    error_log /var/log/nginx/campfire.error.log crit;
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+
+        # WebSocket upgrade — required for Socket.io.
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+
+        # Don't forward the client IP downstream; the app neither needs nor
+        # wants it. (Omit X-Forwarded-For deliberately.)
+        proxy_read_timeout 1h;
+    }
+}
