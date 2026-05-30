@@ -262,6 +262,8 @@
         <header class="terminal__bar">
           <span class="terminal__title">~/campfire</span>
           <span id="presence" class="terminal__presence">· 0/4 ·</span>
+          <button id="wander" class="terminal__mute" type="button" aria-label="Find a livelier fire" title="Find a livelier fire" hidden>🧭</button>
+          <button id="invite" class="terminal__mute" type="button" aria-label="Invite a friend to this fire" title="Invite a friend">🔗</button>
           <button id="help" class="terminal__mute" type="button" aria-label="What is this?" aria-expanded="false" title="What is this?">?</button>
           <button id="stats" class="terminal__mute" type="button" aria-label="By the numbers" aria-expanded="false" title="By the numbers">📊</button>
           <button id="woodpile" class="terminal__mute" type="button" aria-label="Feed the fire" aria-expanded="false" title="Feed the fire">🪵</button>
@@ -293,9 +295,11 @@
           </p>
           <ul class="howto">
             <li>You’re handed a random name when you arrive.</li>
+            <li>You’ll never land at an empty fire — you warm up by the embers until someone’s around.</li>
             <li>Links, emails &amp; phone numbers turn to ash — keep it off-grid.</li>
             <li>If 3 of 4 vote to extinguish someone (the ✕ by their name), they drift to another fire.</li>
             <li>The fire brightens as more people gather.</li>
+            <li><span class="howto__key">🔗</span> invite a friend to your fire · <span class="howto__key">🧭</span> wander to a livelier one.</li>
             <li><span class="howto__key">♪</span> toggles the crackle · <span class="howto__key">🪵</span> feeds the server.</li>
           </ul>
           <p class="woodpile__body howto__foot">

@@ -7,7 +7,10 @@ import { Server } from "socket.io";
 import { sanitize } from "../shared/filter.js";
 import {
   MAX_PER_ROOM,
-  findOpenRoom,
+  createRoom,
+  findOccupiedOpenRoom,
+  findBusiestOpenRoom,
+  getRoomByToken,
   joinRoom,
   leaveRoom,
   getRoom,
@@ -74,6 +77,11 @@ if (isProd) {
 // Track which room each socket is at, in memory only.
 const socketRoom = new Map(); // socketId -> roomId
 
+// Sockets waiting to be matched. Nobody is ever seated alone at a fresh fire —
+// if there's no fire with company to join, you wait here until someone else
+// shows up (or a seat opens). In memory only.
+const lobby = new Set(); // socketId
+
 // Per-socket token-bucket rate limiting, in memory only. Keeps one flooding
 // client from drowning a room (messages) or abusing the kick (votes).
 const buckets = new Map(); // socketId -> { [kind]: { tokens, last } }
@@ -110,13 +118,32 @@ function system(roomId, text) {
   io.to(roomId).emit("system", { text });
 }
 
-// Push aggregate, server-wide counts to everyone. Cheap and ephemeral.
+// Push aggregate, server-wide counts to everyone. Souls includes people still
+// warming up in the lobby — they're online too. Cheap and ephemeral.
 function emitStats() {
-  io.emit("stats", { ...stats(), max: MAX_PER_ROOM });
+  const s = stats();
+  io.emit("stats", {
+    fires: s.fires,
+    souls: s.souls + lobby.size,
+    waiting: lobby.size,
+    max: MAX_PER_ROOM,
+  });
 }
 
-function seat(socket, avoid = null) {
-  const room = findOpenRoom(avoid);
+// Tell everyone in the lobby how the night's going so the wait never feels dead.
+function emitLobby() {
+  const s = stats();
+  const payload = {
+    waiting: lobby.size,
+    fires: s.fires,
+    souls: s.souls + lobby.size,
+    max: MAX_PER_ROOM,
+  };
+  for (const id of lobby) io.to(id).emit("lobby", payload);
+}
+
+// Actually sit a socket down at a specific fire.
+function seat(socket, room) {
   const me = joinRoom(room, socket.id);
   socket.join(room.id);
   socketRoom.set(socket.id, room.id);
@@ -125,6 +152,7 @@ function seat(socket, avoid = null) {
     roomId: room.id,
     you: { id: socket.id, name: me.name },
     max: MAX_PER_ROOM,
+    reserved: !!room.reserved, // seated alone holding a fire for a friend
   });
   system(room.id, `${me.name} sat down by the fire.`);
   emitPresence(room);
@@ -132,8 +160,59 @@ function seat(socket, avoid = null) {
   return room;
 }
 
+// Place a socket: into a fire with company, or the lobby if there's none.
+// `token` jumps straight to a specific (invited) fire; `avoid` skips a room.
+function placeSocket(socket, { token = null, avoid = null } = {}) {
+  if (token) {
+    const room = getRoomByToken(token);
+    if (room && room.users.size < MAX_PER_ROOM) {
+      room.reserved = false; // a friend arrived — open the fire back up
+      return seat(socket, room);
+    }
+    socket.emit("system", { text: "That fire was full or had gone out — finding you another." });
+  }
+  const open = findOccupiedOpenRoom(avoid);
+  if (open) return seat(socket, open);
+  // Nobody to sit with yet — wait by the embers rather than start a lonely fire.
+  lobby.add(socket.id);
+  emitLobby();
+  reconcileLobby();
+  return null;
+}
+
+// Match waiters: fill fires that have company first, then start a fresh fire
+// once two or more people are ready to start it together.
+function reconcileLobby() {
+  let changed = false;
+  for (const id of [...lobby]) {
+    const open = findOccupiedOpenRoom();
+    if (!open) break;
+    lobby.delete(id);
+    const sock = io.sockets.sockets.get(id);
+    if (sock) seat(sock, open);
+    changed = true;
+  }
+  if (lobby.size >= 2) {
+    const room = createRoom();
+    let n = 0;
+    for (const id of [...lobby]) {
+      if (n >= MAX_PER_ROOM) break;
+      lobby.delete(id);
+      const sock = io.sockets.sockets.get(id);
+      if (sock) { seat(sock, room); n++; }
+    }
+    changed = true;
+  }
+  if (changed) emitLobby();
+}
+
 io.on("connection", (socket) => {
-  seat(socket);
+  // The client asks to join once connected (optionally with an invite token),
+  // so an invite link lands in the right fire without a placement race.
+  socket.on("join", ({ token } = {}) => {
+    if (socketRoom.has(socket.id) || lobby.has(socket.id)) return;
+    placeSocket(socket, { token: typeof token === "string" ? token.slice(0, 16) : null });
+  });
 
   socket.on("message", (raw) => {
     // ~3 msgs/sec, tolerating short bursts. Over-limit messages are dropped.
@@ -174,7 +253,48 @@ io.on("connection", (socket) => {
     if (targetSocket) {
       targetSocket.leave(roomId);
       targetSocket.emit("extinguished");
-      seat(targetSocket, roomId); // re-seat at a DIFFERENT fire
+      placeSocket(targetSocket, { avoid: roomId }); // re-place at a DIFFERENT fire
+    }
+  });
+
+  // Wander off to a livelier fire (or the lobby if there's nowhere busier).
+  socket.on("wander", () => {
+    if (!rateOk(socket.id, "wander", 0.5, 2)) return;
+    const roomId = socketRoom.get(socket.id);
+    const room = getRoom(roomId);
+    if (!room) return; // not seated (waiting) — nothing to wander from
+    const me = room.users.get(socket.id);
+    leaveRoom(room, socket.id);
+    socketRoom.delete(socket.id);
+    socket.leave(roomId);
+    if (me) system(roomId, `${me.name} wandered off to another fire.`);
+    emitPresence(room);
+
+    const busiest = findBusiestOpenRoom(roomId);
+    if (busiest) seat(socket, busiest);
+    else { lobby.add(socket.id); emitLobby(); }
+    reconcileLobby();
+    emitStats();
+  });
+
+  // Invite a friend: share this fire's token, or (from the lobby) claim a
+  // reserved fire to hold for them.
+  socket.on("invite", () => {
+    const room = getRoom(socketRoom.get(socket.id));
+    if (room) {
+      socket.emit("invite-link", { token: room.token });
+      return;
+    }
+    if (lobby.has(socket.id)) {
+      lobby.delete(socket.id);
+      emitLobby();
+      const held = createRoom({ reserved: true });
+      seat(socket, held);
+      socket.emit("invite-link", { token: held.token });
+      // A held-but-unused fire rejoins the pool after a while so it isn't stuck.
+      setTimeout(() => {
+        if (held.reserved) { held.reserved = false; reconcileLobby(); }
+      }, 10 * 60 * 1000);
     }
   });
 
@@ -185,10 +305,13 @@ io.on("connection", (socket) => {
     leaveRoom(room, socket.id);
     socketRoom.delete(socket.id);
     buckets.delete(socket.id);
+    const wasWaiting = lobby.delete(socket.id);
     if (room && me) {
       system(roomId, `${me.name} drifted off into the night.`);
       emitPresence(room);
     }
+    if (wasWaiting) emitLobby();
+    reconcileLobby(); // a freed seat may let a waiter in
     emitStats();
   });
 });

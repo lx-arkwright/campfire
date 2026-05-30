@@ -8,8 +8,19 @@ const CREATURES = ["Worm", "Coyote", "Cone", "Owl", "Moth", "Fox", "Hare", "Newt
 
 let roomSeq = 0;
 
-// roomId -> { id, users: Map<socketId, { name, votesAgainst: Set<socketId> }> }
+// roomId -> { id, token, reserved, users: Map<socketId, { name, votesAgainst }> }
 const rooms = new Map();
+// invite token -> room. Tokens are random and unguessable, so fires can't be
+// enumerated by their sequential id. They die with the room.
+const tokenIndex = new Map();
+
+function makeToken() {
+  let t;
+  do {
+    t = Math.random().toString(36).slice(2, 10);
+  } while (tokenIndex.has(t));
+  return t;
+}
 
 function makeName() {
   // Deterministic-free randomness is fine here; collisions inside a 4-person
@@ -20,20 +31,41 @@ function makeName() {
   return `${a}${c}${n}`;
 }
 
-function newRoom() {
+// Light a fresh fire. `reserved` fires are held for an invited friend and are
+// skipped by automatic placement until the friend arrives (or it times out).
+export function createRoom({ reserved = false } = {}) {
   const id = `fire-${++roomSeq}`;
-  const room = { id, users: new Map() };
+  const token = makeToken();
+  const room = { id, token, reserved, users: new Map() };
   rooms.set(id, room);
+  tokenIndex.set(token, room);
   return room;
 }
 
-// Find a room with a free seat, or light a new fire. `avoid` lets a kicked
-// user skip the room they were just thrown out of.
-export function findOpenRoom(avoid = null) {
+// A fire that already has company AND a free seat — what a newcomer should join
+// so they're never seated alone. Reserved (invite-held) fires are skipped.
+export function findOccupiedOpenRoom(avoid = null) {
   for (const room of rooms.values()) {
-    if (room.id !== avoid && room.users.size < MAX_PER_ROOM) return room;
+    if (room.id === avoid || room.reserved) continue;
+    if (room.users.size >= 1 && room.users.size < MAX_PER_ROOM) return room;
   }
-  return newRoom();
+  return null;
+}
+
+// The non-full fire with the MOST people — for "wander to a livelier fire".
+export function findBusiestOpenRoom(avoid = null) {
+  let best = null;
+  for (const room of rooms.values()) {
+    if (room.id === avoid || room.reserved) continue;
+    if (room.users.size >= 1 && room.users.size < MAX_PER_ROOM) {
+      if (!best || room.users.size > best.users.size) best = room;
+    }
+  }
+  return best;
+}
+
+export function getRoomByToken(token) {
+  return tokenIndex.get(token);
 }
 
 export function joinRoom(room, socketId) {
@@ -49,7 +81,10 @@ export function leaveRoom(room, socketId) {
   room.users.delete(socketId);
   // Clear any votes that referenced the departed user.
   for (const u of room.users.values()) u.votesAgainst.delete(socketId);
-  if (room.users.size === 0) rooms.delete(room.id);
+  if (room.users.size === 0) {
+    rooms.delete(room.id);
+    tokenIndex.delete(room.token);
+  }
 }
 
 export function getRoom(roomId) {

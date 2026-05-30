@@ -65,6 +65,15 @@ body {
 }
 .scene__litstones { opacity: calc(0.25 + 0.55 * var(--brightness)) !important; }
 
+/* One-shot whole-scene brighten when someone arrives or you get seated. */
+.scene__bg { will-change: filter; }
+.scene--flare .scene__bg { animation: scene-flare 0.9s ease-out; }
+@keyframes scene-flare {
+  0%   { filter: brightness(1.7) saturate(1.15); }
+  35%  { filter: brightness(1.25); }
+  100% { filter: brightness(1); }
+}
+
 /* God-rays sway softly in opacity, as if dust drifts through them. */
 .ray { animation: shaft 7s ease-in-out infinite; }
 .ray--b { animation-duration: 9s; animation-delay: -2s; }
@@ -323,6 +332,7 @@ body {
   font-family: inherit; font-size: 1.25rem;
 }
 .composer__input::placeholder { color: #5a4f3a; }
+.composer__input:disabled { opacity: 0.55; cursor: not-allowed; }
 .composer__emoji {
   background: none;
   border: none;
@@ -367,4 +377,5 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .ray, .ember, .flame, .smoke, .spark, .firefly { animation: none; }
+  .scene--flare .scene__bg { animation: none; }
 }
