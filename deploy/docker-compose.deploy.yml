@@ -1,0 +1,25 @@
+# Production compose for Campfire.
+#
+# Binds to LOOPBACK ONLY — CloudPanel's Nginx reverse-proxies to it; the
+# container is never exposed on the public interface. No database, by design:
+# all state lives in the container's RAM and dies with it.
+#
+# Run from the repo root:
+#   docker compose -f deploy/docker-compose.deploy.yml up -d --build
+#
+# Change the host port (3002) to any free port on your box, and PUBLIC_ORIGIN to
+# your domain (it's the server's CORS allow-list in production).
+
+services:
+  campfire:
+    build:
+      context: ..
+    image: campfire:latest
+    container_name: campfire
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3002:3000"
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      PUBLIC_ORIGIN: "https://campfire.arkwright.work"
