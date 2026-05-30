@@ -54,7 +54,7 @@ git clone https://github.com/lx-arkwright/campfire.git /opt/campfire
 cd /opt/campfire
 # deploy/docker-compose.deploy.yml binds 127.0.0.1:3002 and sets prod env.
 # Edit the host port / PUBLIC_ORIGIN there if yours differ.
-docker compose -f deploy/docker-compose.deploy.yml up -d --build
+docker compose -p campfire -f deploy/docker-compose.deploy.yml up -d --build
 curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:3002/   # expect 200
 ```
 

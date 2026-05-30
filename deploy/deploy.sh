@@ -11,12 +11,16 @@ cd "$(dirname "$0")/.."   # repo root
 
 COMPOSE="deploy/docker-compose.deploy.yml"
 PORT="${HEALTH_PORT:-3002}"
+# Pin the project name so the container is recreated in place regardless of which
+# directory the compose file lives in (otherwise Compose derives it from deploy/
+# and collides with the existing `campfire` container).
+PROJECT="campfire"
 
 echo "==> Pulling latest…"
 git pull --ff-only
 
 echo "==> Building + restarting…"
-docker compose -f "$COMPOSE" up -d --build
+docker compose -p "$PROJECT" -f "$COMPOSE" up -d --build
 
 echo "==> Health check…"
 for _ in $(seq 1 20); do
