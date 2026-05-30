@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="description" content="A cozy, anonymous, 4-person campfire. No accounts. No logs. No trace." />
+    <meta name="theme-color" content="#0a120d" />
+    <title>campfire</title>
+
+    <!-- Inline SVG favicon — a flame, zero extra requests. -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='27' font-size='27'%3E%F0%9F%94%A5%3C/text%3E%3C/svg%3E" />
+
+    <!-- Open Graph / Twitter for shareable links -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="campfire" />
+    <meta property="og:description" content="A cozy, anonymous, 4-person campfire. No accounts. No logs. No trace." />
+    <meta property="og:image" content="https://campfire.arkwright.work/og.png" />
+    <meta property="og:url" content="https://campfire.arkwright.work/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="campfire" />
+    <meta name="twitter:description" content="A cozy, anonymous, 4-person campfire. No accounts. No logs. No trace." />
+    <meta name="twitter:image" content="https://campfire.arkwright.work/og.png" />
+  </head>
+  <body>
+    <main id="scene" class="scene" data-brightness="0">
+      <svg class="scene__bg" viewBox="0 0 480 320" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+        <defs>
+          <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#22392a" />
+            <stop offset="0.42" stop-color="#142318" />
+            <stop offset="1" stop-color="#0a120d" />
+          </linearGradient>
+          <radialGradient id="canopyLight" cx="0.54" cy="0.08" r="0.75">
+            <stop offset="0" stop-color="#5f8f50" stop-opacity="0.7" />
+            <stop offset="1" stop-color="#5f8f50" stop-opacity="0" />
+          </radialGradient>
+          <linearGradient id="foliage" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#3f7240" />
+            <stop offset="1" stop-color="#1d3a21" />
+          </linearGradient>
+          <linearGradient id="trunk" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#160d07" />
+            <stop offset="0.5" stop-color="#46301e" />
+            <stop offset="0.68" stop-color="#5a4029" />
+            <stop offset="1" stop-color="#130b06" />
+          </linearGradient>
+          <radialGradient id="ground" cx="0.5" cy="0.86" r="0.75">
+            <stop offset="0" stop-color="#3d3c21" />
+            <stop offset="0.5" stop-color="#222a19" />
+            <stop offset="1" stop-color="#0b110c" />
+          </radialGradient>
+          <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0" stop-color="#ffb142" stop-opacity="0.8" />
+            <stop offset="0.45" stop-color="#ff7a1e" stop-opacity="0.34" />
+            <stop offset="1" stop-color="#ff7a1e" stop-opacity="0" />
+          </radialGradient>
+          <linearGradient id="ray" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#fbf4d0" stop-opacity="0.42" />
+            <stop offset="1" stop-color="#fbf4d0" stop-opacity="0" />
+          </linearGradient>
+          <linearGradient id="flame" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0" stop-color="#ff3e10" />
+            <stop offset="0.4" stop-color="#ff871d" />
+            <stop offset="0.78" stop-color="#ffc23d" />
+            <stop offset="1" stop-color="#fff3c8" />
+          </linearGradient>
+          <radialGradient id="ember" cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0" stop-color="#fff0b0" />
+            <stop offset="0.45" stop-color="#ff7a1e" />
+            <stop offset="1" stop-color="#ff7a1e" stop-opacity="0" />
+          </radialGradient>
+          <radialGradient id="rock" cx="0.4" cy="0.3" r="0.85">
+            <stop offset="0" stop-color="#7e7f74" />
+            <stop offset="1" stop-color="#393a35" />
+          </radialGradient>
+        </defs>
+
+        <!-- deep forest backdrop -->
+        <rect x="0" y="0" width="480" height="320" fill="url(#bg)" />
+        <rect x="0" y="0" width="480" height="210" fill="url(#canopyLight)" />
+
+        <!-- distant trunks for depth -->
+        <g opacity="0.5">
+          <rect x="120" y="60" width="14" height="230" fill="#13201a" />
+          <rect x="172" y="50" width="11" height="240" fill="#0f1b14" />
+          <rect x="300" y="56" width="13" height="234" fill="#13201a" />
+          <rect x="352" y="64" width="11" height="226" fill="#0f1b14" />
+        </g>
+
+        <!-- canopy foliage masses -->
+        <g class="canopy">
+          <g fill="#16301b">
+            <ellipse cx="70"  cy="34" rx="96"  ry="54" />
+            <ellipse cx="200" cy="22" rx="120" ry="52" />
+            <ellipse cx="330" cy="30" rx="110" ry="56" />
+            <ellipse cx="450" cy="52" rx="90"  ry="56" />
+            <ellipse cx="10"  cy="58" rx="80"  ry="58" />
+          </g>
+          <g fill="url(#foliage)">
+            <ellipse cx="86"  cy="28" rx="70" ry="38" />
+            <ellipse cx="208" cy="18" rx="86" ry="36" />
+            <ellipse cx="324" cy="26" rx="78" ry="40" />
+            <ellipse cx="430" cy="44" rx="62" ry="38" />
+          </g>
+          <g fill="#5b9050" opacity="0.8">
+            <ellipse cx="120" cy="18" rx="30" ry="15" />
+            <ellipse cx="236" cy="12" rx="34" ry="14" />
+            <ellipse cx="336" cy="16" rx="30" ry="15" />
+            <ellipse cx="52"  cy="30" rx="26" ry="14" />
+          </g>
+        </g>
+
+        <!-- god-ray shafts -->
+        <g class="rays">
+          <polygon class="ray ray--a" points="274,4 306,4 332,290 206,300" fill="url(#ray)" />
+          <polygon class="ray ray--b" points="312,4 328,4 356,290 282,296" fill="url(#ray)" opacity="0.55" />
+        </g>
+
+        <!-- ground clearing -->
+        <ellipse cx="240" cy="300" rx="320" ry="120" fill="url(#ground)" />
+
+        <!-- fallen log, left -->
+        <g>
+          <rect x="-4" y="276" width="120" height="24" rx="12" fill="#3a2616" />
+          <rect x="-4" y="276" width="120" height="7"  rx="3.5" fill="#4e3420" />
+          <ellipse cx="114" cy="288" rx="9" ry="12" fill="#5a3f28" />
+          <ellipse cx="114" cy="288" rx="4.5" ry="6" fill="#33210f" />
+        </g>
+
+        <!-- foreground framing trees -->
+        <g class="tree tree--left">
+          <path d="M-8,-6 L92,-6 C84,108 96,220 104,272 C108,300 78,312 52,320 L-8,320 Z" fill="url(#trunk)" />
+          <g stroke="#170d06" stroke-width="2.5" fill="none" opacity="0.7">
+            <path d="M20,8 C24,116 34,236 38,316" />
+            <path d="M52,8 C56,128 64,250 68,316" />
+            <path d="M34,60 C44,64 52,74 56,86" />
+          </g>
+          <path d="M-8,296 C28,298 50,308 50,320 L-8,320 Z" fill="#241608" />
+        </g>
+        <g class="tree tree--right">
+          <path d="M488,-6 L388,-6 C396,108 384,220 376,272 C372,300 402,312 428,320 L488,320 Z" fill="url(#trunk)" />
+          <g stroke="#170d06" stroke-width="2.5" fill="none" opacity="0.7">
+            <path d="M460,8 C456,116 446,236 442,316" />
+            <path d="M428,8 C424,128 416,250 412,316" />
+            <path d="M446,60 C436,64 428,74 424,86" />
+          </g>
+          <path d="M488,296 C452,298 430,308 430,320 L488,320 Z" fill="#241608" />
+        </g>
+
+        <!-- warm glow pool (scales with headcount) -->
+        <ellipse class="scene__glow" cx="240" cy="266" rx="210" ry="130" fill="url(#glow)" />
+
+        <!-- grass tufts -->
+        <g stroke-linecap="round" fill="none" stroke="#3f6e34" stroke-width="2.5">
+          <path d="M150,300 q3,-16 -2,-24" /><path d="M156,300 q0,-16 4,-22" /><path d="M162,300 q4,-13 10,-21" />
+          <path d="M330,300 q-3,-16 2,-24" /><path d="M324,300 q0,-16 -4,-22" /><path d="M318,300 q-4,-13 -10,-21" />
+          <path d="M196,312 q3,-13 -2,-20" /><path d="M202,312 q0,-13 4,-19" />
+          <path d="M284,312 q-3,-13 2,-20" /><path d="M278,312 q0,-13 -4,-19" />
+          <path d="M64,308 q3,-13 -2,-20" /><path d="M70,308 q0,-13 4,-19" />
+          <path d="M420,306 q-3,-13 2,-20" /><path d="M414,306 q0,-13 -4,-19" />
+        </g>
+
+        <!-- mushrooms -->
+        <g class="mushroom">
+          <rect x="128" y="296" width="5" height="11" rx="2.5" fill="#e8e0cf" />
+          <ellipse cx="130.5" cy="296" rx="10" ry="6" fill="#bd3a2a" />
+          <circle cx="127" cy="295" r="1.5" fill="#f7eee0" />
+          <circle cx="133" cy="297" r="1.2" fill="#f7eee0" />
+          <rect x="138" y="300" width="4" height="8" rx="2" fill="#e8e0cf" />
+          <ellipse cx="140" cy="300" rx="7" ry="4.5" fill="#bd3a2a" />
+          <circle cx="139" cy="299" r="1" fill="#f7eee0" />
+        </g>
+        <g class="mushroom">
+          <rect x="356" y="300" width="4" height="8" rx="2" fill="#e8e0cf" />
+          <ellipse cx="358" cy="300" rx="7" ry="4.5" fill="#bd3a2a" />
+          <circle cx="357" cy="299" r="1" fill="#f7eee0" />
+        </g>
+
+        <!-- scattered leaves -->
+        <g class="leaves">
+          <ellipse cx="176" cy="306" rx="3.5" ry="2.2" fill="#c4622a" transform="rotate(20 176 306)" />
+          <ellipse cx="214" cy="316" rx="3.5" ry="2.2" fill="#a8431f" transform="rotate(-15 214 316)" />
+          <ellipse cx="286" cy="310" rx="3.5" ry="2.2" fill="#d08a2e" transform="rotate(40 286 310)" />
+          <ellipse cx="318" cy="316" rx="3.5" ry="2.2" fill="#b4521f" transform="rotate(10 318 316)" />
+          <ellipse cx="150" cy="314" rx="3.5" ry="2.2" fill="#c4622a" transform="rotate(-30 150 314)" />
+          <ellipse cx="356" cy="312" rx="3.5" ry="2.2" fill="#a8431f" transform="rotate(25 356 312)" />
+          <ellipse cx="248" cy="318" rx="3.5" ry="2.2" fill="#d08a2e" transform="rotate(-10 248 318)" />
+          <ellipse cx="192" cy="300" rx="2.6" ry="2"   fill="#b4521f" />
+          <ellipse cx="300" cy="300" rx="2.6" ry="2"   fill="#c4622a" />
+          <ellipse cx="120" cy="312" rx="2.6" ry="2"   fill="#d08a2e" />
+          <ellipse cx="392" cy="308" rx="2.6" ry="2"   fill="#a8431f" />
+        </g>
+
+        <!-- loose rocks -->
+        <g>
+          <ellipse cx="96"  cy="312" rx="11" ry="7" fill="url(#rock)" />
+          <ellipse cx="402" cy="316" rx="13" ry="8" fill="url(#rock)" />
+        </g>
+
+        <!-- stone ring -->
+        <g class="stones">
+          <ellipse cx="180" cy="296" rx="16" ry="11" fill="url(#rock)" />
+          <ellipse cx="216" cy="306" rx="17" ry="12" fill="url(#rock)" />
+          <ellipse cx="262" cy="306" rx="17" ry="12" fill="url(#rock)" />
+          <ellipse cx="300" cy="296" rx="16" ry="11" fill="url(#rock)" />
+          <ellipse cx="312" cy="278" rx="13" ry="9"  fill="url(#rock)" />
+          <ellipse cx="168" cy="278" rx="13" ry="9"  fill="url(#rock)" />
+          <ellipse cx="198" cy="270" rx="12" ry="8"  fill="url(#rock)" />
+          <ellipse cx="282" cy="270" rx="12" ry="8"  fill="url(#rock)" />
+          <g class="scene__litstones" fill="#a76e38" opacity="0.7">
+            <ellipse cx="216" cy="300" rx="11" ry="3.5" />
+            <ellipse cx="262" cy="300" rx="11" ry="3.5" />
+            <ellipse cx="198" cy="266" rx="7"  ry="2.5" />
+            <ellipse cx="282" cy="266" rx="7"  ry="2.5" />
+          </g>
+        </g>
+
+        <!-- the fire -->
+        <g class="scene__fire">
+          <ellipse class="ember" cx="240" cy="286" rx="58" ry="22" fill="url(#ember)" />
+
+          <!-- teepee logs -->
+          <g stroke-linecap="round">
+            <line x1="240" y1="292" x2="206" y2="234" stroke="#3a2616" stroke-width="9" />
+            <line x1="240" y1="292" x2="274" y2="234" stroke="#2c1c0f" stroke-width="9" />
+            <line x1="240" y1="292" x2="228" y2="228" stroke="#46301e" stroke-width="7" />
+            <line x1="240" y1="292" x2="252" y2="230" stroke="#34210f" stroke-width="7" />
+            <line x1="198" y1="296" x2="284" y2="284" stroke="#3a2616" stroke-width="8" />
+            <line x1="208" y1="286" x2="276" y2="298" stroke="#2c1c0f" stroke-width="7" />
+          </g>
+
+          <!-- flames: layered teardrops, gently licking upward -->
+          <g class="flames">
+            <path class="flame flame--outer" d="M240,292 C194,254 206,210 240,172 C274,210 286,254 240,292 Z" fill="#c1361b" opacity="0.92" />
+            <path class="flame flame--mid"   d="M240,290 C204,258 214,222 240,190 C266,222 276,258 240,290 Z" fill="url(#flame)" />
+            <path class="flame flame--inner" d="M240,286 C216,262 222,234 240,208 C258,234 264,262 240,286 Z" fill="#ffd86a" />
+            <path class="flame flame--core"  d="M240,282 C228,264 231,242 240,222 C249,242 252,264 240,282 Z" fill="#fff3c8" />
+          </g>
+        </g>
+
+        <!-- smoke -->
+        <g class="smokes" fill="none" stroke="#cdd2cd" stroke-linecap="round">
+          <path class="smoke smoke--a" d="M240,210 C230,186 250,170 240,144 C231,124 248,106 242,82"  stroke-width="6" />
+          <path class="smoke smoke--b" d="M246,206 C258,184 238,166 250,142 C259,122 244,106 252,84" stroke-width="5" />
+        </g>
+
+        <!-- sparks -->
+        <g class="sparks" fill="#ffb347">
+          <circle class="spark spark--a" cx="228" cy="232" r="2"   />
+          <circle class="spark spark--b" cx="252" cy="244" r="1.7" />
+          <circle class="spark spark--c" cx="240" cy="220" r="2.2" fill="#ffd27a" />
+          <circle class="spark spark--d" cx="262" cy="250" r="1.7" fill="#ff9a2e" />
+          <circle class="spark spark--e" cx="218" cy="248" r="1.6" fill="#ffd27a" />
+        </g>
+
+        <!-- fireflies in the trees -->
+        <circle class="firefly firefly--a" cx="120" cy="160" r="2" fill="#cde36b" />
+        <circle class="firefly firefly--b" cx="372" cy="140" r="2" fill="#bfe06a" />
+      </svg>
+
+      <section class="terminal">
+        <header class="terminal__bar">
+          <span class="terminal__title">~/campfire</span>
+          <span id="presence" class="terminal__presence">· 0/4 ·</span>
+          <button id="help" class="terminal__mute" type="button" aria-label="What is this?" aria-expanded="false" title="What is this?">?</button>
+          <button id="stats" class="terminal__mute" type="button" aria-label="By the numbers" aria-expanded="false" title="By the numbers">📊</button>
+          <button id="woodpile" class="terminal__mute" type="button" aria-label="Feed the fire" aria-expanded="false" title="Feed the fire">🪵</button>
+          <button id="mute" class="terminal__mute" type="button" aria-label="Toggle sound">♪</button>
+        </header>
+
+        <div id="woodpile-panel" class="woodpile" role="dialog" aria-label="Feed the Server, Feed the Fire" hidden>
+          <h2 class="woodpile__title">Feed the Server, Feed the Fire 🪵</h2>
+          <p class="woodpile__body">
+            This campfire is 100% free, tracking-free, and ad-free. It runs
+            entirely on server space and good vibes. If you’ve enjoyed a quiet
+            conversation under the stars tonight, consider tossing a few bucks
+            into the woodpile.
+          </p>
+          <a
+            class="woodpile__btn"
+            href="https://buy.stripe.com/5kQ7sLd3E9htfjjgNEgQE00"
+            target="_blank"
+            rel="noopener noreferrer"
+          >Toss in a log →</a>
+        </div>
+
+        <div id="help-panel" class="woodpile" role="dialog" aria-label="What is Campfire?" hidden>
+          <h2 class="woodpile__title">Around the campfire 🔥</h2>
+          <p class="woodpile__body">
+            Campfire is a tiny, anonymous chat. Up to <strong>4 people</strong>
+            share each fire — no accounts, no history, nothing saved. Close the
+            tab and you’re gone for good.
+          </p>
+          <ul class="howto">
+            <li>You’re handed a random name when you arrive.</li>
+            <li>Links, emails &amp; phone numbers turn to ash — keep it off-grid.</li>
+            <li>If 3 of 4 vote to extinguish someone (the ✕ by their name), they drift to another fire.</li>
+            <li>The fire brightens as more people gather.</li>
+            <li><span class="howto__key">♪</span> toggles the crackle · <span class="howto__key">🪵</span> feeds the server.</li>
+          </ul>
+          <p class="woodpile__body howto__foot">
+            Found a bug or have an idea?
+            <a class="woodpile__link" href="https://github.com/lx-arkwright/campfire/issues" target="_blank" rel="noopener noreferrer">Open an issue →</a>
+          </p>
+        </div>
+
+        <div id="stats-panel" class="woodpile" role="dialog" aria-label="By the numbers" hidden>
+          <h2 class="woodpile__title">By the numbers 📊</h2>
+          <dl class="stats">
+            <dt>Fires burning</dt><dd id="stat-fires">—</dd>
+            <dt>Souls online</dt><dd id="stat-souls">—</dd>
+            <dt>At your fire</dt><dd id="stat-fire">—</dd>
+            <dt>You’ve said <span class="stats__sub">(this visit)</span></dt><dd id="stat-sent">0</dd>
+          </dl>
+          <p class="stats__note">Live and in-memory — nothing here is stored.</p>
+        </div>
+
+        <div id="log" class="terminal__log" role="log" aria-live="polite"></div>
+
+        <ul id="seats" class="seats" aria-label="Who's at the fire"></ul>
+
+        <div id="emoji-panel" class="emoji-panel" role="menu" aria-label="Insert emoji" hidden></div>
+
+        <form id="composer" class="composer" autocomplete="off">
+          <span class="composer__prompt">&gt;</span>
+          <input
+            id="input"
+            class="composer__input"
+            type="text"
+            maxlength="500"
+            placeholder="say something into the dark…"
+            aria-label="Message"
+          />
+          <button id="emoji" class="composer__emoji" type="button" aria-label="Insert emoji" aria-expanded="false" title="Emoji">😊</button>
+        </form>
+      </section>
+    </main>
+
+    <!-- crackling fire + crickets; muted toggle handled in main.js -->
+    <audio id="ambient" loop preload="none"></audio>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
